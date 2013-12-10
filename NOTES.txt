@@ -12,10 +12,10 @@ with my vmware machine on wifi, I'm getting about:
 
 to inspect messages, you can use
 
-> openssl s_client -connect po12.mail.mit.edu:993
-> . select INBOX.mime
-> . uid fetch 120 (body[header])
-> . uid fetch 126 (body[header])
+openssl s_client -connect po12.mail.mit.edu:993
+. select INBOX.mime
+. uid fetch 120 (body[header])
+. uid fetch 126 (body[header])
 
 
 
