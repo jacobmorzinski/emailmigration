@@ -1,7 +1,7 @@
 import imaplib
 import getpass
-user = 'snizromj'
-passwd = getpass.getpass()
+user = raw_input('Username: ')
+passwd = getpass.getpass('Password for {0}: ' .format(user) )
 m = imaplib.IMAP4_SSL('imap.exchange.mit.edu')
 m.capability()
 
@@ -14,7 +14,7 @@ f = 'Migrated/INBOX/Hamscreen'
 m.select(f)
 
 #m.fetch('1:*','flags')
-#m.fetch('1:*','(body[header.fields (date subject from to cc)])')
+#m.fetch('1:*','(body[header.fields (subject from to)] uid)')
 #m.uid('search',None,'(HEADER Subject "bloom county")')
 #m.uid('fetch','53,123','(body[header.fields (Message-id subject date from to)])')
 

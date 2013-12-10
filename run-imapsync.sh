@@ -2,17 +2,17 @@
 
 ##############################################################################
 
-workdir=${HOME}/Documents
+# Checklist:
+#  host1, auth1, host2, auth2
+#  user1, pfil1, user2, pfil2
 
-host1=po12.mail.mit.edu
-auth1=LOGIN
-user1=jmorzins
-pfil1="${workdir}/${user1}.password"
+#  dry, justfolders
 
-host2=imap.exchange.mit.edu
-auth2=PLAIN
-user2=snizromj
-pfil2="${workdir}/${user2}.password"
+#  prefix, regextrans2
+#  folder
+#  useuid, usecache, useheaders
+#  delete2duplicates
+
 
 # Also consider proxy, see the FAQ
 # --authuser1 admin_user --password1 admin_user_password --user1 foo_user
@@ -33,6 +33,18 @@ pfil2="${workdir}/${user2}.password"
 
 ##############################################################################
 
+workdir=${HOME}/Documents
+
+host1=po12.mail.mit.edu
+auth1=LOGIN
+user1=jmorzins
+pfil1="${workdir}/${user1}.password"
+
+host2=imap.exchange.mit.edu
+auth2=PLAIN
+user2=snizromj
+pfil2="${workdir}/${user2}.password"
+
 now=`date +%FT%T`
 synclog=synclog-"${user1}@${host1}"-"${user2}@${host2}"-"${now}".txt
 
@@ -40,6 +52,14 @@ echo >&2 "Logging to ${synclog}"
 
 exec 1>"${workdir}/${synclog}"
 exec 2>"${workdir}/${synclog}"
+
+#experimental
+#useheaders="--useheader Message-Id --useheader Received --useheader Subject"
+useheaders=""
+
+#targeted
+folder="--folder INBOX.Hamscreen"
+#folder=""
 
 imapsync="${workdir}"/imapsync/imapsync
 
@@ -50,9 +70,9 @@ exec "${imapsync}" --noreleasecheck \
   --user2 "${user2}" --passfile2 "${pfil2}" \
   --prefix1 '' \
   --regextrans2 's#(.*)#Migrated/$1#' \
-  --folder INBOX.Hamscreen \
-  --nouseuid --nousecache \
-  --useheader Message-Id --useheader Received --useheader Subject \
+  $folder \
+  --useuid --usecache \
+  $useheaders \
   --delete2duplicates --expunge2  # --dry --justfolders
 
 
