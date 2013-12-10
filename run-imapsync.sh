@@ -29,22 +29,14 @@ pfil2="${workdir}/${user2}.password"
 # ...
 # Or just clobber --sep1 and/or --prefix1 to emulate our current script.
 
-# I got some errors.
-
-# - msg INBOX.mime/120 {61551} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 493 BAD Command Argument Error. 11
-# - msg INBOX.mime/126 {51671} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 499 BAD Command Argument Error. 11
-
-# the cache folder skipped these UIDs (120 and 126):
-# 119_81 121_82 122_83 123_84 124_85 125_86 127_87
-# ls: cannot access 120*: No such file or directory
-# ls: cannot access 126*: No such file or directory
-
 
 
 ##############################################################################
 
+now=`date +%FT%T`
+synclog=synclog-"${user1}@${host1}"-"${user2}@${host2}"-"${now}".txt
 
-synclog=synclog-"${user1}@${host1}"-"${user2}@${host2}".txt
+echo >&2 "Logging to ${synclog}"
 
 exec 1>"${workdir}/${synclog}"
 exec 2>"${workdir}/${synclog}"
@@ -59,6 +51,8 @@ exec "${imapsync}" --noreleasecheck \
   --prefix1 '' \
   --regextrans2 's#(.*)#Migrated/$1#' \
   --folder INBOX.Hamscreen \
-  --useuid --delete2 --delete2duplicates --expunge2
+  --nouseuid --nousecache \
+  --useheader Message-Id --useheader Received --useheader Subject \
+  --delete2duplicates --expunge2  # --dry --justfolders
 
 

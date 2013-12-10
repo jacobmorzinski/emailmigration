@@ -10,15 +10,31 @@ with my vmware machine on wifi, I'm getting about:
 - 5-10 message/s
 - 150-300 KiB/s
 
-to inspect messages, you can use
 
-openssl s_client -connect po12.mail.mit.edu:993
+
+Errors look like this:
+======================
+
+- msg INBOX.mime/120 {61551} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 493 BAD Command Argument Error. 11
+- msg INBOX.mime/126 {51671} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 499 BAD Command Argument Error. 11
+
+the cache folder skipped these UIDs (120 and 126):
+119_81 121_82 122_83 123_84 124_85 125_86 127_87
+ls: cannot access 120*: No such file or directory
+ls: cannot access 126*: No such file or directory
+
+
+to inspect messages, you can use
+--------------------------------
+imtest -m plain -s -a snizromj imap.exchange.mit.edu
 . select INBOX.mime
 . uid fetch 120 (body[header])
 . uid fetch 126 (body[header])
 
 
-
+Caching
+-------
+/tmp/imapsync_cache
 
 
 can use gkeyring.py to save passwords into the Gnome keychain
