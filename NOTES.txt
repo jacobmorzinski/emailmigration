@@ -36,6 +36,12 @@ Caching
 -------
 /tmp/imapsync_cache
 
+unless --tmpdir /var/tmp
+
+viewing logs
+------------
+less `ls -rt1 synclog-* | tail -1`
+
 
 can use gkeyring.py to save passwords into the Gnome keychain
 

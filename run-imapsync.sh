@@ -63,16 +63,23 @@ folder="--folder INBOX.Hamscreen"
 
 imapsync="${workdir}"/imapsync/imapsync
 
+#   --regextrans2 's#(.*)#Migrated/$1#' \
+
+# --justfolders --dry
+# --justfolders
+# --dry
+# 
+
 exec "${imapsync}" --noreleasecheck \
   --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
   --user1 "${user1}" --passfile1 "${pfil1}" \
   --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
   --user2 "${user2}" --passfile2 "${pfil2}" \
+  --tmpdir /var/tmp \
   --prefix1 '' \
-  --regextrans2 's#(.*)#Migrated/$1#' \
   $folder \
   --useuid --usecache \
   $useheaders \
-  --delete2duplicates --expunge2  # --dry --justfolders
+  --delete2duplicates --expunge2 # --dry --justfolders
 
 
