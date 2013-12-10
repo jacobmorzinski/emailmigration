@@ -40,15 +40,6 @@ pfil2="${workdir}/${user2}.password"
 # ls: cannot access 126*: No such file or directory
 
 
-# openssl s_client -connect po12.mail.mit.edu:993
-# . select INBOX.mime
-# . uid fetch 120 (body[header])
-# . uid fetch 126 (body[header])
-
-# with my vmware machine on wifi, I'm getting about:
-# 5-10 message/s
-# 150-300 KiB/s
-
 
 ##############################################################################
 

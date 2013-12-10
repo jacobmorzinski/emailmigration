@@ -1,16 +1,40 @@
+Scratch notes:
 
+Raw download speed tests from my office to a Ubuntu VM:
+- 10 MB/s on wifi (raw download of 150 MB file)
+- 36 MB/s on Ethernet (raw download of 150 MB file)
+
+imapsync speed tests:
+
+with my vmware machine on wifi, I'm getting about:
+- 5-10 message/s
+- 150-300 KiB/s
+
+to inspect messages, you can use
+
+> openssl s_client -connect po12.mail.mit.edu:993
+> . select INBOX.mime
+> . uid fetch 120 (body[header])
+> . uid fetch 126 (body[header])
+
+
+
+
+
+can use gkeyring.py to save passwords into the Gnome keychain
+
+========
 keyring.py from:
 
 http://www.rittau.org/blog/20070726-01
 http://www.rittau.org/gnome/python/keyring.py
 
-
+========
 imap-passwords from:
 
 http://www.clasohm.com/blog/20080922/imap-passwords
 
-
-
+========
 gkeyring.py from:
 
 http://kparal.wordpress.com/2009/09/29/command-line-access-to-gnome-keyring/
