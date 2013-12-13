@@ -25,6 +25,7 @@ m.select(f)
 #    print f[4+i:]
 #    m.delete(........)
 
+#m.search(None,'(HEADER Content-Type application/pkcs7-signature)')
 
 #m.logout()
 
