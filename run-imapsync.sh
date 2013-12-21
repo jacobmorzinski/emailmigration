@@ -35,14 +35,14 @@
 
 workdir=${HOME}/Documents
 
-host1=po12.mail.mit.edu
+host1=po14.mail.mit.edu
 auth1=LOGIN
-user1=jmorzins
+user1=l_______
 pfil1="${workdir}/${user1}.password"
 
 host2=imap.exchange.mit.edu
 auth2=PLAIN
-user2=snizromj
+user2=l_______
 pfil2="${workdir}/${user2}.password"
 
 now=`date +%FT%T`
@@ -58,8 +58,10 @@ exec 2>"${workdir}/${synclog}"
 useheaders=""
 
 #targeted
-folder="--folder INBOX.Hamscreen"
-#folder=""
+#folder="--folder INBOX.Mail to be restored"
+folder=""
+
+# Big folders need --nofoldersizes
 
 imapsync="${workdir}"/imapsync/imapsync
 
@@ -77,9 +79,10 @@ exec "${imapsync}" --noreleasecheck \
   --user2 "${user2}" --passfile2 "${pfil2}" \
   --tmpdir /var/tmp \
   --prefix1 '' \
-  $folder \
+  --nofoldersizes \
+  --folder "INBOX.Mail to be restored" \
   --useuid --usecache \
   $useheaders \
-  --delete2duplicates --expunge2 # --dry --justfolders
+  --delete2duplicates --expunge2
 
 

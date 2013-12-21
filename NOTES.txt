@@ -9,6 +9,16 @@ imapsync speed tests:
 with my vmware machine on wifi, I'm getting about:
 - 5-10 message/s
 - 150-300 KiB/s
+it took about 200 seconds
+to transfer 30 MB in 800 messages with many deletions
+
+
+speed for l_______
+2.3 MiB/s
+0.2 message/s
+
+It tooks 16 minutes
+to transfer 2.4 GiB in 184 messages 
 
 
 
@@ -72,5 +82,8 @@ USAGE
  python gkeyring.py --type network -p user=jmorzins,server=po12.mail.mit.edu,protocol=imap --name imapsync -O
 
  python gkeyring.py --type network -p user=jmorzins,server=po12.mail.mit.edu,protocol=imap --name imapsync -o secret
+
+
+
 
 
