@@ -4,7 +4,7 @@
 
 # Checklist:
 #  host1, auth1, host2, auth2
-#  user1, pfil1, user2, pfil2
+#  user1, pwdfile1, user2, pwdfile2
 
 #  dry, justfolders
 
@@ -35,15 +35,17 @@
 
 workdir=${HOME}/Documents
 
-host1=po14.mail.mit.edu
+# The source
+host1=po__.mail.mit.edu
 auth1=LOGIN
-user1=l_______
-pfil1="${workdir}/${user1}.password"
+user1=________
+pwdfile1="${workdir}/${user1}.password"
 
+# The destination
 host2=imap.exchange.mit.edu
 auth2=PLAIN
-user2=l_______
-pfil2="${workdir}/${user2}.password"
+user2=________
+pwdfile2="${workdir}/${user2}.password"
 
 now=`date +%FT%T`
 synclog=synclog-"${user1}@${host1}"-"${user2}@${host2}"-"${now}".txt
@@ -74,15 +76,16 @@ imapsync="${workdir}"/imapsync/imapsync
 
 exec "${imapsync}" --noreleasecheck \
   --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
-  --user1 "${user1}" --passfile1 "${pfil1}" \
+  --user1 "${user1}" --passfile1 "${pwdfile1}" \
   --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
-  --user2 "${user2}" --passfile2 "${pfil2}" \
+  --user2 "${user2}" --passfile2 "${pwdfile2}" \
   --tmpdir /var/tmp \
-  --prefix1 '' \
   --nofoldersizes \
-  --folder "INBOX.Mail to be restored" \
+  --prefix1 '' \
+  --regextrans2 's#(.*)#Migrated/$1#' \
   --useuid --usecache \
-  $useheaders \
-  --delete2duplicates --expunge2
+  --include "INBOX.utf.*" \
+  --justfolders --dry \
+##  --delete2duplicates --expunge2 \
 
 

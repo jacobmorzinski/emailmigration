@@ -1,25 +1,25 @@
-Scratch notes:
+Homepage: http://imapsync.lamiral.info/
 
-Raw download speed tests from my office to a Ubuntu VM:
-- 10 MB/s on wifi (raw download of 150 MB file)
-- 36 MB/s on Ethernet (raw download of 150 MB file)
+Requires modules.
 
-imapsync speed tests:
+Test for missing modules with:
 
-with my vmware machine on wifi, I'm getting about:
-- 5-10 message/s
-- 150-300 KiB/s
-it took about 200 seconds
-to transfer 30 MB in 800 messages with many deletions
+perl -mMail::IMAPClient -mDigest::MD5 -mTerm::ReadKey -mIO::Socket::SSL -mFile::Spec -mDigest::HMAC_MD5 -mAuthen::NTLM -mTime::HiRes -mData::Uniqid -mURI::Escape  -e ""
+
+Look for error messages and install modules with:
+
+$ perl -MCPAN -e shell
+cpan> install Mail::IMAPClient
+cpan> (etc)
+
+I just did cycles of install one, test, read the error,
+install another, test again, etc.
+
+Once all the modules are installed, test imapsync with
+ imapsync --noreleasecheck --help
 
 
-speed for l_______
-2.3 MiB/s
-0.2 message/s
-
-It tooks 16 minutes
-to transfer 2.4 GiB in 184 messages 
-
+The script has a PILE of options.
 
 
 Errors look like this:
@@ -28,13 +28,19 @@ Errors look like this:
 - msg INBOX.mime/120 {61551} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 493 BAD Command Argument Error. 11
 - msg INBOX.mime/126 {51671} couldn't append  (Subject:[Mime test message/partial]) to folder Migrated/INBOX/mime: 499 BAD Command Argument Error. 11
 
-the cache folder skipped these UIDs (120 and 126):
+For these particular errors the UIDs are 120 and 126 and the
+cache folder also skips them (note 119_81 and 121_82, skipping 120_?)
 119_81 121_82 122_83 123_84 124_85 125_86 127_87
 ls: cannot access 120*: No such file or directory
 ls: cannot access 126*: No such file or directory
 
+Caching is in
+-------
+/tmp/imapsync_cache 
+unless --tmpdir /var/tmp
 
-to inspect messages, you can use
+
+to inspect messages by UID, you can use
 --------------------------------
 imtest -m plain -s -a snizromj imap.exchange.mit.edu
 . select INBOX.mime
@@ -42,47 +48,128 @@ imtest -m plain -s -a snizromj imap.exchange.mit.edu
 . uid fetch 126 (body[header])
 
 
-Caching
--------
-/tmp/imapsync_cache
 
-unless --tmpdir /var/tmp
 
 viewing logs
 ------------
+My launcher makes logs with long unwieldy names.
+View logs with:
+
 less `ls -rt1 synclog-* | tail -1`
 
 
-can use gkeyring.py to save passwords into the Gnome keychain
-
+EXAMPLES
 ========
-keyring.py from:
 
-http://www.rittau.org/blog/20070726-01
-http://www.rittau.org/gnome/python/keyring.py
+imapsync --noreleasecheck \
+  --justfolders --dry \
+  --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
+  --user1 "${user1}" --passfile1 "${pwdfile1}" \
+  --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
+  --user2 "${user2}" --passfile2 "${pwdfile2}" \
+  --tmpdir /var/tmp \
+  --nofoldersizes \
+  --prefix1 '' \
+  --folder "INBOX.Sent Mail" \
+  --regextrans2 's#(.*)#Migrated/$1#' \
+  --useuid --usecache
 
-========
-imap-passwords from:
+++++ Looping on each folder
+[INBOX.Sent Mail]                   -> [Migrated/INBOX/Sent Mail]         
 
-http://www.clasohm.com/blog/20080922/imap-passwords
 
-========
-gkeyring.py from:
 
-http://kparal.wordpress.com/2009/09/29/command-line-access-to-gnome-keyring/
-https://github.com/kparal/gkeyring
 
-Note that it can return multiple keys if you query broadly.
 
-USAGE
-# Set
- python gkeyring.py --set --type network -p user=jmorzins,server=po12.mail.mit.edu,protocol=imap --name imapsync
 
-# Query
- python gkeyring.py --type network -p user=jmorzins,server=po12.mail.mit.edu,protocol=imap --name imapsync -O
+imapsync --noreleasecheck \
+  --dry \
+  --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
+  --user1 "${user1}" --passfile1 "${pwdfile1}" \
+  --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
+  --user2 "${user2}" --passfile2 "${pwdfile2}" \
+  --tmpdir /var/tmp \
+  --nofoldersizes \
+  --prefix1 '' \
+  --folder "INBOX.Sent Mail" \
+  --regextrans2 's#(.*)#Migrated/$1#' \
+  --useuid --usecache \
 
- python gkeyring.py --type network -p user=jmorzins,server=po12.mail.mit.edu,protocol=imap --name imapsync -o secret
 
+++++ Looping on each folder
+[INBOX.Sent Mail]                   -> [Migrated/INBOX/Sent Mail]         
+cache directory: /var/tmp/imapsync_cache/po12.mail.mit.edu/jmorzins/imap.exchang
+e.mit.edu/snizromj/INBOX/Sent Mail/Migrated/INBOX/Sent Mail
+CACHE h1 h2: 0 files
+msg INBOX.Sent Mail/6 copying to Migrated/INBOX/Sent Mail       (not really since --dry mode)
+msg INBOX.Sent Mail/7 copying to Migrated/INBOX/Sent Mail       (not really since --dry mode)
+msg INBOX.Sent Mail/8 copying to Migrated/INBOX/Sent Mail       (not really since --dry mode)
+
+
+
+
+exec "${imapsync}" --noreleasecheck \
+  --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
+  --user1 "${user1}" --passfile1 "${pwdfile1}" \
+  --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
+  --user2 "${user2}" --passfile2 "${pwdfile2}" \
+  --tmpdir /var/tmp \
+  --nofoldersizes \
+  --prefix1 '' \
+  --folder "INBOX.Sent Mail" \
+  --regextrans2 's#(.*)#Migrated/$1#' \
+  --useuid --usecache \
+
+
+
+++++ Looping on each folder
+[INBOX.Sent Mail]                   -> [Migrated/INBOX/Sent Mail]         
+cache directory: /var/tmp/imapsync_cache/po12.mail.mit.edu/jmorzins/imap.exchange.mit.edu/snizromj/INBOX/Sent Mail/Migrated/INBOX/Sent Mail
+CACHE h1 h2: 0 files
+msg INBOX.Sent Mail/6 {7761}            copied to Migrated/INBOX/Sent Mail/177        3.10 msgs/s  23.522 KiB/s  
+msg INBOX.Sent Mail/7 {453}             copied to Migrated/INBOX/Sent Mail/178        3.79 msgs/s  15.203 KiB/s  
+msg INBOX.Sent Mail/8 {831}             copied to Migrated/INBOX/Sent Mail/179        5.08 msgs/s  14.952 KiB/s  
+
+
+
+
+Use --include to get folders by regexp
+
+
+exec "${imapsync}" --noreleasecheck \
+  --host1 "${host1}" --ssl1 --authmech1 "${auth1}" \
+  --user1 "${user1}" --passfile1 "${pwdfile1}" \
+  --host2 "${host2}" --ssl2 --authmech2 "${auth2}" \
+  --user2 "${user2}" --passfile2 "${pwdfile2}" \
+  --tmpdir /var/tmp \
+  --nofoldersizes \
+  --prefix1 '' \
+  --include "INBOX.utf.*" \
+  --regextrans2 's#(.*)#Migrated/$1#' \
+  --useuid --usecache \
+
+
+
+++++ Looping on each folder
+[INBOX.utf]                         -> [Migrated/INBOX/utf]               
+cache directory: /var/tmp/imapsync_cache/po12.mail.mit.edu/jmorzins/imap.exchange.mit.edu/snizromj/INBOX/utf/Migrated/INBOX/utf
+CACHE h1 h2: 0 files
+msg INBOX.utf/4562 {7083}         copied to Migrated/INBOX/utf/3          3.50 msgs/s  24.189 KiB/s  
+
+
+
+And now I see the flaw in the system.
+The uid cache always appends and never removes messages.
+If the cache slips or if a UID slips, you get duplicates.
+SO... NUCLEAR OPTION!
+
+  --skipsize --nouseuid --usecache \
+  --include "INBOX.utf.*" \
+  --delete2duplicates --expunge2 \
+
+
+Oh hell.  It is getting different message sizes from the
+different servers arrrrrrgh.
 
 
 
